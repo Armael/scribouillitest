@@ -1,0 +1,6 @@
+collections:
+  projects:
+    output: true
+plugins:
+  - jekyll-feed
+theme: mimoza

@@ -1,0 +1,31 @@
+default:
+  image: ruby:3.2.2
+  cache:
+    - key:
+        files:
+          - Gemfile.lock
+      paths:
+        - vendor/bundle
+  before_script:
+    - gem install bundler
+    - bundle config set --local path "vendor/bundle"
+    - bundle install
+
+stages:
+  - deploy
+
+
+pages:
+  stage: deploy
+  variables:
+    JEKYLL_ENV: production
+    LC_ALL: C.UTF-8
+  script:
+    - bundle exec jekyll build -d public
+    - gzip -k -9 $(find public -iname '*.html' -o -iname '*.css' -o -iname '*.js' -o -iname '*.json') || true
+  artifacts:
+    paths:
+    - public
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
